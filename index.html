@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarklet Executor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔖 Bookmarklet Executor</h1>
+            <p>Run any bookmarklet or code on any website</p>
+        </header>
+
+        <div class="main-content">
+            <!-- URL Input -->
+            <div class="input-section">
+                <label for="urlInput">🌐 Website URL:</label>
+                <input type="text" id="urlInput" placeholder="https://example.com" value="https://">
+                <button id="loadSite">Load Site</button>
+            </div>
+
+            <!-- Code Input -->
+            <div class="input-section">
+                <label for="codeInput">💻 Bookmarklet Code:</label>
+                <textarea id="codeInput" placeholder="javascript:(function(){/* Your code here */})();"></textarea>
+                <div class="button-group">
+                    <button id="runBookmarklet">Run Bookmarklet</button>
+                    <button id="runJS">Run as JavaScript</button>
+                    <button id="clearCode">Clear</button>
+                </div>
+            </div>
+
+            <!-- Language Selector -->
+            <div class="input-section">
+                <label for="langSelect">Language:</label>
+                <select id="langSelect">
+                    <option value="javascript">JavaScript</option>
+                    <option value="bookmarklet">Bookmarklet (javascript:)</option>
+                    <option value="console">Console Script</option>
+                </select>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="presets-section">
+                <h3>🚀 Quick Presets:</h3>
+                <div class="preset-buttons">
+                    <button class="preset" data-code="javascript:(function(){alert('Hello World!');})();">Hello World</button>
+                    <button class="preset" data-code="javascript:(function(){document.body.style.background='red';})();">Red Background</button>
+                    <button class="preset" data-code="javascript:(function(){console.log('Page title:',document.title);})();">Log Title</button>
+                    <button class="preset" data-code="javascript:(function(){let images=document.getElementsByTagName('img');for(let img of images){img.style.filter='hue-rotate(90deg)';}})();">Trippy Images</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Panel -->
+        <div class="debug-panel">
+            <div class="debug-header">
+                <h3>🐛 Debug Console</h3>
+                <div class="debug-controls">
+                    <button id="clearDebug">Clear</button>
+                    <button id="toggleDebug">Hide</button>
+                </div>
+            </div>
+            <div class="debug-content" id="debugContent">
+                <div class="log-entry info">Welcome to Bookmarklet Executor! Load a site and run some code.</div>
+            </div>
+        </div>
+
+        <!-- Iframe for loaded sites -->
+        <iframe id="siteFrame" src="about:blank" style="display: none;"></iframe>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
