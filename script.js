@@ -1,42 +1,88 @@
-class BookmarkletExecutor {
+class NeonBookmarkletExecutor {
     constructor() {
+        this.sidebarOpen = false;
+        this.autoScroll = true;
         this.init();
     }
 
     init() {
         this.bindEvents();
-        this.log('Bookmarklet Executor initialized', 'info');
+        this.setActiveTab('bookmarklets');
+        this.log('NEON Bookmarklet Executor Initialized!', 'success');
     }
 
     bindEvents() {
-        // Load site
-        document.getElementById('loadSite').addEventListener('click', () => this.loadSite());
-        document.getElementById('urlInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.loadSite();
+        // Sidebar toggle
+        document.getElementById('sidebarToggle').addEventListener('click', () => this.toggleSidebar());
+        document.getElementById('closeSidebar').addEventListener('click', () => this.toggleSidebar());
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabName = e.target.getAttribute('data-tab');
+                this.setActiveTab(tabName);
+            });
         });
 
-        // Run code
+        // Main functionality
+        document.getElementById('loadSite').addEventListener('click', () => this.loadSite());
         document.getElementById('runBookmarklet').addEventListener('click', () => this.runBookmarklet());
         document.getElementById('runJS').addEventListener('click', () => this.runJavaScript());
         document.getElementById('clearCode').addEventListener('click', () => this.clearCode());
 
         // Debug controls
         document.getElementById('clearDebug').addEventListener('click', () => this.clearDebug());
-        document.getElementById('toggleDebug').addEventListener('click', () => this.toggleDebug());
+        document.getElementById('exportLog').addEventListener('click', () => this.exportLog());
+        document.getElementById('toggleAutoScroll').addEventListener('click', () => this.toggleAutoScroll());
 
         // Presets
         document.querySelectorAll('.preset').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const code = e.target.getAttribute('data-code');
                 document.getElementById('codeInput').value = code;
-                this.log(`Loaded preset: ${e.target.textContent}`, 'success');
+                this.log(`Preset loaded: ${e.target.textContent}`, 'success');
+                this.setActiveTab('bookmarklets');
             });
         });
 
-        // Language selector
-        document.getElementById('langSelect').addEventListener('change', (e) => {
-            this.log(`Language changed to: ${e.target.value}`, 'info');
+        // Quick actions
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = e.target.getAttribute('data-action');
+                this.runQuickAction(action);
+            });
         });
+
+        // Enter key for URL input
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.loadSite();
+        });
+    }
+
+    toggleSidebar() {
+        this.sidebarOpen = !this.sidebarOpen;
+        document.getElementById('sidebar').classList.toggle('active');
+        document.querySelector('.main-content').classList.toggle('sidebar-open');
+        
+        if (this.sidebarOpen) {
+            this.log('Sidebar opened', 'info');
+        }
+    }
+
+    setActiveTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+        // Update tab panes
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.remove('active');
+        });
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+
+        this.log(`Switched to ${tabName.toUpperCase()} tab`, 'info');
     }
 
     loadSite() {
@@ -52,14 +98,13 @@ class BookmarkletExecutor {
             url = 'https://' + url;
         }
 
-        this.log(`Loading site: ${url}`, 'info');
+        this.log(`Loading: ${url}`, 'info');
         
         try {
-            // For security, we'll open in new tab instead of iframe
             window.open(url, '_blank');
-            this.log(`Site opened in new tab: ${url}`, 'success');
+            this.log(`✅ Site opened in new tab`, 'success');
         } catch (error) {
-            this.log(`Error loading site: ${error.message}`, 'error');
+            this.log(`❌ Failed to load: ${error.message}`, 'error');
         }
     }
 
@@ -67,20 +112,18 @@ class BookmarkletExecutor {
         const code = document.getElementById('codeInput').value.trim();
         
         if (!code) {
-            this.log('Please enter some code to run', 'error');
+            this.log('Please enter some code', 'error');
             return;
         }
 
         this.log('Executing bookmarklet...', 'info');
 
         try {
-            // Validate it's a proper bookmarklet
             let executableCode = code;
             if (!executableCode.startsWith('javascript:')) {
                 executableCode = 'javascript:' + executableCode;
             }
 
-            // Create and click a temporary link
             const tempLink = document.createElement('a');
             tempLink.href = executableCode;
             tempLink.style.display = 'none';
@@ -88,9 +131,9 @@ class BookmarkletExecutor {
             tempLink.click();
             document.body.removeChild(tempLink);
 
-            this.log('Bookmarklet executed successfully', 'success');
+            this.log('✅ Bookmarklet executed!', 'success');
         } catch (error) {
-            this.log(`Bookmarklet execution failed: ${error.message}`, 'error');
+            this.log(`❌ Execution failed: ${error.message}`, 'error');
         }
     }
 
@@ -98,31 +141,41 @@ class BookmarkletExecutor {
         const code = document.getElementById('codeInput').value.trim();
         
         if (!code) {
-            this.log('Please enter some JavaScript code', 'error');
+            this.log('Please enter JavaScript code', 'error');
             return;
         }
 
-        this.log('Executing JavaScript...', 'info');
-        this.log(`Code: ${code}`, 'info');
+        this.log('Running JavaScript...', 'info');
 
         try {
-            // Remove javascript: prefix if present
             let jsCode = code;
             if (jsCode.startsWith('javascript:')) {
                 jsCode = jsCode.substring(11);
             }
 
-            // Execute the code
             const result = eval(jsCode);
             
             if (result !== undefined) {
-                this.log(`Execution result: ${result}`, 'success');
+                this.log(`✅ Result: ${result}`, 'success');
             } else {
-                this.log('JavaScript executed (no return value)', 'success');
+                this.log('✅ Code executed (no return value)', 'success');
             }
         } catch (error) {
-            this.log(`JavaScript execution failed: ${error.message}`, 'error');
-            console.error('Execution error:', error);
+            this.log(`❌ JavaScript error: ${error.message}`, 'error');
+        }
+    }
+
+    runQuickAction(action) {
+        const actions = {
+            rainbow: "javascript:(function(){let s=document.createElement('style');s.innerHTML='*{animation:rainbow 2s infinite;} @keyframes rainbow{0%{filter:hue-rotate(0deg);}100%{filter:hue-rotate(360deg);}}';document.head.appendChild(s);})();",
+            disco: "javascript:(function(){let s=document.createElement('style');s.innerHTML='body{animation:disco 0.5s infinite;} @keyframes disco{0%{background:#ff0000;}25%{background:#00ff00;}50%{background:#0000ff;}75%{background:#ffff00;}100%{background:#ff00ff;}}';document.head.appendChild(s);})();",
+            matrix: "javascript:(function(){document.body.style.background='#000';document.body.style.color='#0f0';document.body.style.fontFamily='Courier New';let chars='0123456789ABCDEF';setInterval(()=>{let e=document.createElement('div');e.textContent=chars.charAt(Math.floor(Math.random()*chars.length));e.style.position='fixed';e.style.top='0';e.style.left=Math.random()*100+'vw';e.style.animation='fall linear forwards';document.body.appendChild(e);setTimeout(()=>e.remove(),2000);},50);let s=document.createElement('style');s.innerHTML='@keyframes fall{to{top:100vh;}}';document.head.appendChild(s);})();"
+        };
+
+        if (actions[action]) {
+            document.getElementById('codeInput').value = actions[action];
+            this.log(`Quick action loaded: ${action.toUpperCase()}`, 'success');
+            this.setActiveTab('bookmarklets');
         }
     }
 
@@ -136,17 +189,25 @@ class BookmarkletExecutor {
         this.log('Debug console cleared', 'info');
     }
 
-    toggleDebug() {
-        const debugContent = document.getElementById('debugContent');
-        const toggleBtn = document.getElementById('toggleDebug');
-        
-        if (debugContent.style.display === 'none') {
-            debugContent.style.display = 'block';
-            toggleBtn.textContent = 'Hide';
-        } else {
-            debugContent.style.display = 'none';
-            toggleBtn.textContent = 'Show';
-        }
+    toggleAutoScroll() {
+        this.autoScroll = !this.autoScroll;
+        const btn = document.getElementById('toggleAutoScroll');
+        btn.textContent = `AUTO SCROLL: ${this.autoScroll ? 'ON' : 'OFF'}`;
+        btn.classList.toggle('green', this.autoScroll);
+        btn.classList.toggle('orange', !this.autoScroll);
+        this.log(`Auto-scroll ${this.autoScroll ? 'enabled' : 'disabled'}`, 'info');
+    }
+
+    exportLog() {
+        const logContent = document.getElementById('debugContent').innerText;
+        const blob = new Blob([logContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'bookmarklet-log.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+        this.log('Log exported as bookmarklet-log.txt', 'success');
     }
 
     log(message, type = 'info') {
@@ -157,58 +218,38 @@ class BookmarkletExecutor {
         logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
         
         debugContent.appendChild(logEntry);
-        debugContent.scrollTop = debugContent.scrollHeight;
         
-        // Also log to browser console
+        if (this.autoScroll) {
+            debugContent.scrollTop = debugContent.scrollHeight;
+        }
+
+        // Console logging
+        const consoleMsg = `[Bookmarklet] ${message}`;
         switch (type) {
-            case 'error':
-                console.error(`[BookmarkletExecutor] ${message}`);
-                break;
-            case 'warning':
-                console.warn(`[BookmarkletExecutor] ${message}`);
-                break;
-            default:
-                console.log(`[BookmarkletExecutor] ${message}`);
+            case 'error': console.error(consoleMsg); break;
+            case 'warning': console.warn(consoleMsg); break;
+            case 'success': console.log('%c' + consoleMsg, 'color: #00ff00'); break;
+            default: console.log('%c' + consoleMsg, 'color: #0080ff');
         }
     }
 }
 
-// Initialize when page loads
+// Initialize when ready
 document.addEventListener('DOMContentLoaded', () => {
-    new BookmarkletExecutor();
+    new NeonBookmarkletExecutor();
 });
 
-// Add some utility functions to global scope for advanced users
-window.BookmarkletUtils = {
-    injectScript: function(code) {
+// Global utilities
+window.NeonBookmarklets = {
+    create: function(code, name) {
+        const encoded = encodeURIComponent(code);
+        return `javascript:(function(){${code}})()`;
+    },
+    
+    inject: function(code) {
         const script = document.createElement('script');
         script.textContent = code;
         document.head.appendChild(script);
-        return 'Script injected successfully';
-    },
-    
-    loadExternalScript: function(url) {
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = url;
-            script.onload = () => resolve('External script loaded');
-            script.onerror = () => reject('Failed to load external script');
-            document.head.appendChild(script);
-        });
-    },
-    
-    createBookmarklet: function(code, name) {
-        const blob = new Blob([`
-            <html>
-            <head><title>${name}</title></head>
-            <body>
-                <a href="${code}" id="bookmarklet">Click to run ${name}</a>
-                <script>
-                    document.getElementById('bookmarklet').click();
-                </script>
-            </body>
-            </html>
-        `], {type: 'text/html'});
-        return URL.createObjectURL(blob);
+        return 'Injected successfully';
     }
 };
