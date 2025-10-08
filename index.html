@@ -8,7 +8,7 @@
 </head>
 <body>
     <!-- Sidebar Toggle Button -->
-    <button id="sidebarToggle" class="neon-btn toggle-btn">☰</button>
+    <button id="sidebarToggle" class="neon-btn toggle-btn">☰ MENU</button>
 
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
@@ -97,7 +97,7 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Area (Everything outside sidebar) -->
     <div class="main-content">
         <div class="hero-section">
             <h1 class="neon-text">💫 NEON BOOKMARKLET EXECUTOR</h1>
@@ -108,14 +108,22 @@
             </div>
         </div>
 
-        <!-- Iframe for loaded sites -->
-        <iframe id="siteFrame" src="about:blank"></iframe>
-        
         <!-- Quick Actions -->
         <div class="quick-actions">
             <button class="neon-btn cyan quick-btn" data-action="rainbow">🌈 RAINBOW MODE</button>
             <button class="neon-btn pink quick-btn" data-action="disco">🎵 DISCO TIME</button>
             <button class="neon-btn yellow quick-btn" data-action="matrix">📟 MATRIX MODE</button>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <div class="instruction-card">
+                <h3>🎯 HOW TO USE</h3>
+                <p>1. Click <strong>☰ MENU</strong> to open sidebar</p>
+                <p>2. Enter a website URL and your code</p>
+                <p>3. Run bookmarklets or JavaScript</p>
+                <p>4. Check debug console for results</p>
+            </div>
         </div>
     </div>
 
