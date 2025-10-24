@@ -1,125 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> shibby plug </title>
-    <link rel="stylesheet" href="style.css">
+	<meta charset="UTF-8" />
+	<title>PokéRogue || KWP: Ports </title>
+	<meta name="title" content="PokéRogue" />
+	<meta name="description" content="A Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, and reaching Pokémon stats you never thought possible." />
+	<meta name="theme-color" content="#da3838" />
+	<meta name="keywords" content="pokerogue, pokemon, roguelite" />
+	<meta name="news_keywords" content="pokerogue, pokemon, roguelite" />
+	<meta name="distribution" content="Global">
+	<meta http-equiv="audience" content="General">
+	<meta property="og:title" content="PokéRogue" />
+	<meta property="og:type" content="website" />
+	<meta property="og:description" content="A Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, and reaching Pokémon stats you never thought possible." />
+	<meta property="og:image" content="https://pokerogue.net/logo512.png" />
+	<meta property="og:url" content="https://pokerogue.net" />
+	<meta property="og:site_name" content="PokéRogue" />
+	<meta property="twitter:title" content="PokéRogue" />
+	<meta property="twitter:description" content="A Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, and reaching Pokémon stats you never thought possible." />
+	<meta property="twitter:image" content="https://pokerogue.net/logo512.png" />
+	<meta property="twitter:card" content="summary" />
+	<meta property="twitter:url" content="https://pokerogue.net" />
+	<link rel="apple-touch-icon" href="./logo512.png" />
+	<link rel="shortcut icon" type="image/png" href="./logo512.png" />
+	<link rel="canonical" href="https://pokerogue.net" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<style type="text/css">
+		@font-face {
+			font-family: 'emerald';
+			src: url('./fonts/pokemon-emerald-pro.ttf') format('truetype');
+		}
+		@font-face {
+			font-family: 'unifont';
+			src: url('./fonts/unifont-15.1.05.otf') format('opentype');
+			size-adjust: 70%;
+		}
+
+		@font-face {
+			font-family: 'pkmnems';
+			src: url('./fonts/pkmnems.ttf') format('truetype');
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="./index.css" />
+	<link rel="manifest" href="./manifest.webmanifest">
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./service-worker.js").then(
+          function (registration) {
+            console.log("ServiceWorker registration successful");
+          },
+          function (err) {
+            console.log("ServiceWorker registration failed: ", err);
+          },
+        );
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', e => {
+      // Prevent invasive install prompt (users are still able to install as an app)
+      e.preventDefault();
+    });
+  </script>
 </head>
+
 <body>
-    <!-- Sidebar Toggle Button -->
-    <button id="sidebarToggle" class="neon-btn toggle-btn">☰ MENU</button>
+	<div id="app"></div>
+	<div id="touchControls">
+		<div id="dpad" class="unselectable">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">
+				<path id="dpadUp" data-key="UP" d="M48,5.8C48,2.5,45.4,0,42,0H29.9C26.6,0,24,2.4,24,5.8V24h24V5.8z" />
+				<path id="dpadRight" data-key="RIGHT" d="M66.2,24H48v24h18.2c3.3,0,5.8-2.7,5.8-6V29.9C72,26.5,69.5,24,66.2,24z" />
+				<path id="dpadDown" data-key="DOWN" d="M24,66.3c0,3.3,2.6,5.7,5.9,5.7H42c3.3,0,6-2.4,6-5.7V48H24V66.3z" />
+				<path id="dpadLeft" data-key="LEFT" d="M5.7,24C2.4,24,0,26.5,0,29.9V42c0,3.3,2.3,6,5.7,6H24V24H5.7z" />
+				<rect id="dpadCenter" x="24" y="24" width="24" height="24" />
+			</svg>
+		</div>
 
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <h2> shib panel </h2>
-            <button id="closeSidebar" class="neon-btn close-btn">×</button>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="bookmarklets">BOOKMARKLETS</button>
-            <button class="tab-btn" data-tab="language">LANGUAGE</button>
-            <button class="tab-btn" data-tab="presets">PRESETS</button>
-            <button class="tab-btn" data-tab="debug">DEBUG</button>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="tab-content">
-            <!-- Bookmarklets Tab -->
-            <div id="bookmarklets-tab" class="tab-pane active">
-                <div class="input-group">
-                    <label>website url: </label>
-                    <input type="text" id="urlInput" placeholder="https://example.com" value="https://">
-                </div>
-                
-                <div class="input-group">
-                    <label>boomarklet: </label>
-                    <textarea id="codeInput" placeholder="javascript:(function(){/* MAGIC HERE */})();"></textarea>
-                </div>
-
-                <div class="button-group">
-                    <button id="loadSite" class="neon-btn green">open site</button>
-                    <button id="runBookmarklet" class="neon-btn red"> execute the THINGZ1!1!1 >:DD (bookmarklet runner)</button>
-                    <button id="runJS" class="neon-btn blue">run jsT</button>
-                    <button id="clearCode" class="neon-btn orange">universe reset</button>
-                </div>
-            </div>
-
-            <!-- Language Tab -->
-            <div id="language-tab" class="tab-pane">
-                <div class="input-group">
-                    <label>SELECT LANGUAGE:</label>
-                    <select id="langSelect" class="neon-select">
-                        <option value="javascript">JavaScript</option>
-                        <option value="bookmarklet">Bookmarklet Format</option>
-                        <option value="typescript">TypeScript</option>
-                        <option value="console">Console Script</option>
-                    </select>
-                </div>
-                
-                <div class="info-box">
-                    <h4> retard tips! :</h4>
-                    <p>• Bookmarklets start with <code>javascript:</code></p>
-                    <p>• Use IIFE: <code>(function(){...})()</code></p>
-                    <p>• Test in console first!</p>
-                </div>
-            </div>
-
-            <!-- Presets Tab -->
-            <div id="presets-tab" class="tab-pane">
-                <h4>🚀 QUICK PRESETS:</h4>
-                <div class="preset-grid">
-                    <button class="preset neon-btn purple" data-code="javascript:(function(){alert('Hello World!');})();">HELLO WORLD</button>
-                    <button class="preset neon-btn cyan" data-code="javascript:(function(){document.body.style.background='#0f0f23';})();">DARK MODE</button>
-                    <button class="preset neon-btn pink" data-code="javascript:(function(){let imgs=document.images;for(let i=0;i<imgs.length;i++){imgs[i].style.transform='rotate('+(Math.random()*360)+'deg)';}})();">SPIN IMAGES</button>
-                    <button class="preset neon-btn yellow" data-code="javascript:(function(){console.log('Title:',document.title,'URL:',location.href);})();">LOG INFO</button>
-                    <button class="preset neon-btn green" data-code="javascript:(function(){document.designMode='on';alert('Design mode ON - click anywhere to edit!');})();">EDIT PAGE</button>
-                    <button class="preset neon-btn red" data-code="javascript:(function(){let links=document.links;for(let i=0;i<links.length;i++){links[i].style.border='2px solid #ff00ff';}})();">HIGHLIGHT LINKS</button>
-                </div>
-            </div>
-
-            <!-- Debug Tab -->
-            <div id="debug-tab" class="tab-pane">
-                <div class="debug-controls">
-                    <button id="clearDebug" class="neon-btn orange">CLEAR LOG</button>
-                    <button id="exportLog" class="neon-btn cyan">EXPORT LOG</button>
-                    <button id="toggleAutoScroll" class="neon-btn green">AUTO SCROLL: ON</button>
-                </div>
-                
-                <div class="debug-console" id="debugContent">
-                    <div class="log-entry info">[SYSTEM] NEON Bookmarklet Executor Ready!</div>
-                    <div class="log-entry success">[SYSTEM] Sidebar initialized</div>
-                    <div class="log-entry warning">[SYSTEM] Load a website to begin</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Content Area (Everything outside sidebar) -->
-    <div class="main-content">
-        <div class="hero-section">
-            <h1 class="neon-text">KWP bookmarklet runner (alpha) </h1>
-            <p class="subtitle">run my crack on your sites</p>
-            <div class="status-indicator">
-                <div class="pulse-dot"></div>
-                <span>meth lab is ready</span>
-            </div>
-        </div>
-
-       
-
-        <!-- Instructions -->
-        <div class="instructions">
-            <div class="instruction-card">
-                <h3>made by + access only:</h3>
-                <p> funniman8453 </p>
-                <p> choco // jakheb</p>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+		<div id="apad" class="unselectable">
+			<div id="apadAction" class="apadCircBtn apadBtn" data-key="ACTION">
+				<text id="apadLabelAction" class="apadLabel">A</text>
+			</div>
+			<div id="apadCancel" class="apadCircBtn apadBtn" data-key="CANCEL">
+				<text id="apadLabelCancel" class="apadLabel">B</text>
+			</div>
+			<div class="apadBtnContainer apadRectBtnContainer">
+				<div id="apadCycleShiny" class="apadSqBtn apadBtn" data-key="CYCLE_SHINY">
+					<text class="apadLabel apadLabelSmall">R</text>
+				</div>
+				<div id="apadCycleVariant" class="apadSqBtn apadBtn" data-key="V">
+					<text class="apadLabel apadLabelSmall">V</text>
+				</div>
+				<div id="apadStats" class="apadRectBtn apadBtn apadBattle" data-key="STATS">
+					<text class="apadLabel apadLabelSmall">C</text>
+				</div>
+				<div id="apadMenu" class="apadRectBtn apadBtn" data-key="MENU">
+					<text class="apadLabel apadLabelSmall">Menu</text>
+				</div>
+			</div>
+			<div class="apadBtnContainer apadSqBtnContainer">
+				<div id="apadCycleForm" class="apadSqBtn apadBtn" data-key="CYCLE_FORM">
+					<text class="apadLabel apadLabelSmall">F</text>
+				</div>
+				<div id="apadCycleGender" class="apadSqBtn apadBtn" data-key="CYCLE_GENDER">
+					<text class="apadLabel apadLabelSmall">G</text>
+				</div>
+				<div id="apadCycleAbility" class="apadSqBtn apadBtn" data-key="CYCLE_ABILITY">
+					<text class="apadLabel apadLabelSmall">E</text>
+				</div>
+				<div id="apadCycleNature" class="apadSqBtn apadBtn" data-key="CYCLE_NATURE">
+					<text class="apadLabel apadLabelSmall">N</text>
+				</div>
+				<div id="apadInfo" class="apadRectBtn apadBtn apadBattle" data-key="V">
+					<text class="apadLabel apadLabelSmall">V</text>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="./src/main.ts"></script>
+	<script src="./src/touch-controls.ts" type="module"></script>
+	<script src="./src/debug.js" type="module"></script>
 </body>
+
 </html>
